@@ -7,7 +7,8 @@ import { GoogleGenerativeAI } from "@google/generative-ai";
 
 const Chatbot = () => {
   const genAI = new GoogleGenerativeAI("AIzaSyCEUuNqzGz9gwvIVXXEFKwZ9wqnn-w3rLo"); // Add your API key here
-  const model = genAI.getGenerativeModel({ model: "gemini-pro" });
+  const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash",
+   });
   const [messages, setMessages] = useState([]);
   const [input, setInput] = useState("");
   const [typing, setTyping] = useState(false);
