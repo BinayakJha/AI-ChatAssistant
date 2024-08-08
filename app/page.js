@@ -59,33 +59,13 @@ const Chatbot = () => {
     );
   };
 
+
   const handleRating = async (index, rating) => {
     setMessages((prevMessages) =>
       prevMessages.map((message, i) =>
         i === index ? { ...message, rating } : message
       )
     );
-
-    const ratedMessage = messages[index];
-    const history = messages.map(message => `${message.isUser ? "User" : "Lily"}: ${message.text}${message.rating !== null ? ` (Rating: ${message.rating}⭐)` : ""}`).join("\n");
-    const prompt = `Your name is Lily, and you are an AI Assistant. You can search, give links of images, and perform Google searches. Here is the conversation so far:\n${history}\nUser rated your last response ${rating}⭐. Improve your response based on this feedback.\nLily:`;
-
-    setTyping(true);
-
-    try {
-      const result = await model.generateContent(prompt);
-      const response = await result.response;
-      const text = await response.text();
-
-      setMessages((prevMessages) => [
-        ...prevMessages,
-        { text: text.trim(), isUser: false, rating: null }
-      ]);
-    } catch (error) {
-      console.error("Error generating response:", error);
-    } finally {
-      setTyping(false);
-    }
   };
 
   const handleKeyPress = (event) => {
