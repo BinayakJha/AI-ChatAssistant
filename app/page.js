@@ -19,7 +19,8 @@ const Chatbot = () => {
     setInput("");
 
     try {
-      const prompt = "Your name is Lily, and you are a AI Assistant, you are chatting with a user. The user says: " + input;
+      const history = messages.map(message => `${message.isUser ? "User" : "Lily"}: ${message.text}`).join("\n");
+      const prompt = `Your name is Lily, and you are an AI Assistant, you are chatting with a user. Here is the conversation so far:\n${history}\nUser: ${input}\nLily:`;
       const result = await model.generateContent(prompt);
       const response = await result.response;
       const text = await response.text();
