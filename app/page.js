@@ -1,6 +1,8 @@
 "use client";
 
 import React, { useState } from "react";
+// import css
+import "./styles.css";
 import { GoogleGenerativeAI } from "@google/generative-ai";
 
 const Chatbot = () => {
@@ -24,7 +26,7 @@ const Chatbot = () => {
 
     try {
       const history = messages.map(message => `${message.isUser ? "User" : "Lily"}: ${message.text}`).join("\n");
-      const prompt = `Your name is Lily, and you are an AI Assistant, you are chatting with a user. Here is the conversation so far:\n${history}\nUser: ${input}\nLily:`;
+      const prompt = `Your name is Lily, and you are an AI Assistant, If user asks you to search anything then search it from google too, you are chatting with a user. Here is the conversation so far:\n${history}\nUser: ${input}\nLily:`;
 
       const result = await model.generateContent(prompt);
       const response = await result.response;
