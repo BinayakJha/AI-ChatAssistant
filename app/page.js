@@ -6,7 +6,7 @@ import "./styles.css";
 import { GoogleGenerativeAI } from "@google/generative-ai";
 
 const Chatbot = () => {
-  const genAI = new GoogleGenerativeAI("AIzaSyBOEvialnVrwV2kQRkPyrZOqg3HMWZwNrw"); // Add your API key here
+  const genAI = new GoogleGenerativeAI(""); // Add your API key here
   const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
   const [messages, setMessages] = useState([]);
   const [input, setInput] = useState("");
