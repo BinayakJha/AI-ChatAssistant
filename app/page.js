@@ -1,62 +1,31 @@
 "use client";
-import React, { useState, useRef, useEffect } from "react";
-import { GoogleGenerativeAI } from "@google/generative-ai";
-import { Send, User, Star, MoreVertical, Smile } from "lucide-react";
 
-const EmojiPicker = ({ onEmojiSelect }) => {
-  const emojis = ["😀", "😂", "🥰", "😎", "🤔", "👍", "🎉", "🌈", "🍕", "🚀"];
-  return (
-    <div className="absolute bottom-full left-0 mb-2 p-2 bg-white dark:bg-gray-800 rounded-lg shadow-lg flex space-x-2">
-      {emojis.map((emoji) => (
-        <button
-          key={emoji}
-          onClick={() => onEmojiSelect(emoji)}
-          className="hover:bg-gray-100 dark:hover:bg-gray-700 rounded p-1 transition-colors duration-200"
-        >
-          {emoji}
-        </button>
-      ))}
-    </div>
-  );
-};
+import React, { useState } from "react";
+// import css
+import "./styles.css";
+import { GoogleGenerativeAI } from "@google/generative-ai";
 
 const Chatbot = () => {
-  const genAI = new GoogleGenerativeAI("AIzaSyBgTLInXBrx-mhdLStDlFfknwizmWFKb8I");
+  const genAI = new GoogleGenerativeAI("AIzaSyBgTLInXBrx-mhdLStDlFfknwizmWFKb8I"); // Add your API key here
   const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
   const [messages, setMessages] = useState([]);
   const [input, setInput] = useState("");
   const [typing, setTyping] = useState(false);
-  const messagesEndRef = useRef(null);
-  const [theme, setTheme] = useState("light");
-  const [showEmojiPicker, setShowEmojiPicker] = useState(false);
-
-  useEffect(() => {
-    document.documentElement.classList.toggle("dark", theme === "dark");
-  }, [theme]);
-
-  const scrollToBottom = () => {
-    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
-  };
-
-  useEffect(scrollToBottom, [messages]);
 
   const handleSendMessage = async () => {
     if (input.trim() === "") return;
 
-    const newMessage = { text: input, isUser: true, rating: null, timestamp: new Date() };
-    setMessages((prevMessages) => [...prevMessages, newMessage]);
+    const newMessage = { text: input, isUser: true, rating: null };
+
+    setMessages((prevMessages) => [
+      ...prevMessages,
+      newMessage
+    ]);
     setInput("");
     setTyping(true);
 
     try {
-      const history = messages
-        .map(
-          (message) =>
-            `${message.isUser ? "User" : "Lily"}: ${message.text}${
-              message.rating !== null ? ` (Rating: ${message.rating}⭐)` : ""
-            }`
-        )
-        .join("\n");
+      const history = messages.map(message => `${message.isUser ? "User" : "Lily"}: ${message.text}${message.rating !== null ? ` (Rating: ${message.rating}⭐)` : ""}`).join("\n");
       const prompt = `Your name is Lily, and you are an AI Assistant. You can search, give links of images, and perform Google searches. Here is the conversation so far:\n${history}\nUser: ${input}\nLily:`;
 
       const result = await model.generateContent(prompt);
@@ -65,7 +34,7 @@ const Chatbot = () => {
 
       setMessages((prevMessages) => [
         ...prevMessages,
-        { text: text.trim(), isUser: false, rating: null, timestamp: new Date() },
+        { text: text.trim(), isUser: false, rating: null }
       ]);
     } catch (error) {
       console.error("Error generating response:", error);
@@ -75,25 +44,23 @@ const Chatbot = () => {
   };
 
   const formatMessage = (text) => {
-    const urlRegex = /(\bhttps?:\/\/\S+)/g;
+    const urlRegex = /(\bhttps?:\/\/[^\s]+)/g;
     return text.split(urlRegex).map((part, index) =>
       urlRegex.test(part) ? (
-        <a
-          key={index}
-          href={part}
-          target="_blank"
-          rel="noopener noreferrer"
-          className="text-blue-600 dark:text-blue-400 underline"
-        >
-          {part}
-        </a>
+        <>
+          <a key={index} href={part} target="_blank" rel="noopener noreferrer" className="text-blue-600 underline">
+            {part}
+          </a>
+          <br />
+        </>
       ) : (
         part
       )
     );
   };
 
-  const handleRating = (index, rating) => {
+
+  const handleRating = async (index, rating) => {
     setMessages((prevMessages) =>
       prevMessages.map((message, i) =>
         i === index ? { ...message, rating } : message
@@ -102,145 +69,108 @@ const Chatbot = () => {
   };
 
   const handleKeyPress = (event) => {
-    if (event.key === "Enter" && !event.shiftKey) {
-      event.preventDefault();
+    if (event.key === 'Enter') {
       handleSendMessage();
     }
   };
 
-  const formatTimestamp = (date) => {
-    return date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-  };
-
-  const toggleTheme = () => {
-    setTheme(theme === "light" ? "dark" : "light");
-  };
-
-  const handleEmojiSelect = (emoji) => {
-    setInput((prevInput) => prevInput + emoji);
-    setShowEmojiPicker(false);
-  };
-
   return (
-    <div className={`flex flex-col h-screen bg-gradient-to-br from-blue-50 to-purple-50 dark:from-gray-900 dark:to-blue-900 transition-colors duration-500`}>
-      <div className="bg-white dark:bg-gray-800 shadow-lg transition-colors duration-500">
-        <div className="container mx-auto px-4 py-3 flex items-center justify-between">
-          <div className="flex items-center space-x-3">
-            <div className="relative">
-              <img
-                src="https://cdn.usegalileo.ai/sdxl10/559d5a52-d216-481a-bf44-a4a16128965d.png"
-                alt="Lily"
-                className="w-12 h-12 rounded-full object-cover border-2 border-blue-500 dark:border-blue-400 shadow-lg"
-              />
-              <div className="absolute bottom-0 right-0 w-3 h-3 bg-green-500 rounded-full border-2 border-white dark:border-gray-800"></div>
-            </div>
-            <div>
-              <h2 className="text-xl font-semibold text-gray-800 dark:text-white">Lily</h2>
-              <p className="text-sm text-gray-500 dark:text-gray-400">AI Assistant</p>
-            </div>
-          </div>
-          <div className="flex items-center space-x-4">
-
-            <button className="text-gray-600 dark:text-gray-300 hover:text-gray-800 dark:hover:text-white transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-blue-500 rounded-full p-2">
-
+    <div className="flex items-center justify-center min-h-screen bg-gray-100">
+      <div
+        className="relative flex flex-col justify-between bg-white rounded-lg shadow-lg overflow-x-hidden w-full max-w-md h-full sm:h-auto lg:max-h-[75vh] lg:min-h-0"
+        style={{ fontFamily: 'Inter, "Noto Sans", sans-serif' }}
+      >
+        <div>
+          <div className="flex items-center bg-white p-4 border-b border-gray-200 justify-between">
+            <h2 className="text-gray-800 text-lg font-bold leading-tight tracking-[-0.015em] flex-1">
+              Chat with Lily
+            </h2>
+            <button className="text-gray-800 focus:outline-none" onClick={() => setMessages([])}>
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="24px"
+                height="24px"
+                fill="currentColor"
+                viewBox="0 0 256 256"
+              >
+                <path d="M205.66,194.34a8,8,0,0,1-11.32,11.32L128,139.31,61.66,205.66a8,8,0,0,1-11.32-11.32L116.69,128,50.34,61.66A8,8,0,0,1,61.66,50.34L128,116.69l66.34-66.35a8,8,0,0,1,11.32,11.32L139.31,128Z"></path>
+              </svg>
             </button>
+          </div>
+          <div className="flex flex-col gap-3 p-4 overflow-y-auto max-h-[500px]">
+            {messages.map((message, index) => (
+              <div key={index} className={`flex ${message.isUser ? "justify-end" : "justify-start"}`}>
+                <div className={`flex items-center gap-3 ${message.isUser ? "flex-row-reverse" : ""}`}>
+                  {!message.isUser && (
+                    <div
+                      className="bg-center bg-no-repeat aspect-square bg-cover rounded-full w-10 shrink-0"
+                      style={{
+                        backgroundImage: 'url("https://cdn.usegalileo.ai/sdxl10/559d5a52-d216-481a-bf44-a4a16128965d.png")'
+                      }}
+                    ></div>
+                  )}
+                  <div className={`flex flex-col gap-1 items-${message.isUser ? "end" : "start"}`}>
+                    <p className={`text-gray-500 text-[13px] font-normal leading-normal max-w-[360px] ${message.isUser ? "text-right" : ""}`}>
+                      {message.isUser ? "User" : "Lily"}
+                    </p>
+                    <p className={`text-base font-normal leading-normal flex max-w-[360px] rounded-xl px-4 py-3 ${message.isUser ? "bg-blue-600 text-white" : "bg-gray-200 text-gray-800"}`}>
+                      {formatMessage(message.text)}
+                    </p>
+                    {!message.isUser && message.rating === null && (
+                      <div className="flex items-center gap-1 mt-2">
+                        <span className="text-sm text-gray-600">Rate this response:</span>
+                        {[1, 2, 3, 4, 5].map((rating) => (
+                          <button
+                            key={rating}
+                            className="text-gray-600 hover:text-gray-900"
+                            onClick={() => handleRating(index, rating)}
+                          >
+                            {rating}⭐
+                          </button>
+                        ))}
+                      </div>
+                    )}
+                    {!message.isUser && message.rating !== null && (
+                      <div className="mt-2 text-sm text-gray-600">Rated: {message.rating}⭐</div>
+                    )}
+                  </div>
+                </div>
+              </div>
+            ))}
+            {typing && (
+              <div className="flex justify-start">
+                <div className="flex items-center gap-3">
+                  <div
+                    className="bg-center bg-no-repeat aspect-square bg-cover rounded-full w-10 shrink-0"
+                    style={{
+                      backgroundImage: 'url("https://cdn.usegalileo.ai/sdxl10/559d5a52-d216-481a-bf44-a4a16128965d.png")'
+                    }}
+                  ></div>
+                  <div className="flex flex-col gap-1 items-start">
+                    <p className="text-gray-500 text-[13px] font-normal leading-normal max-w-[360px]">Lily</p>
+                    <p className="text-base font-normal leading-normal flex max-w-[360px] rounded-xl px-4 py-3 bg-gray-200 text-gray-800">Lily is typing...</p>
+                  </div>
+                </div>
+              </div>
+            )}
           </div>
         </div>
-      </div>
-      <div className="flex-1 overflow-y-auto p-4 space-y-4">
-        {messages.map((message, index) => (
-          <div
-            key={index}
-            className={`flex ${
-              message.isUser ? "flex-row-reverse" : "flex-row"
-            } items-start`}
-          >
-            <div
-              className={`flex-shrink-0 ${
-                message.isUser ? "ml-4" : "mr-4"
-              }`}
-            >
-              {!message.isUser ? (
-                <img
-                  src="https://cdn.usegalileo.ai/sdxl10/559d5a52-d216-481a-bf44-a4a16128965d.png"
-                  alt="Lily"
-                  className="w-10 h-10 rounded-full object-cover border-2 border-blue-500 dark:border-blue-400 shadow-md"
-                />
-              ) : (
-                <div className="w-10 h-10 rounded-full bg-gradient-to-r from-blue-500 to-purple-500 flex items-center justify-center shadow-md">
-                  <User size={20} className="text-white" />
-                </div>
-              )}
-            </div>
-            <div
-              className={`flex-1 rounded-2xl p-4 shadow-lg w-auto max-w-fit ${
-                message.isUser
-                  ? "bg-gradient-to-r from-blue-500 to-purple-500 text-white"
-                  : "bg-white dark:bg-gray-800 text-gray-800 dark:text-white"
-              }`}
-            >
-              <p className="text-sm leading-relaxed">{formatMessage(message.text)}</p>
-              <div className="mt-2 flex justify-between items-center">
-                <span className="text-xs opacity-75">
-                  {formatTimestamp(message.timestamp)}
-                </span>
-                {!message.isUser && (
-                  <div className="flex">
-                    {[1, 2, 3, 4, 5].map((star) => (
-                      <button
-                        key={star}
-                        onClick={() => handleRating(index, star)}
-                        className={`focus:outline-none transition-colors duration-200 ${
-                          message.rating >= star
-                            ? "text-yellow-400"
-                            : "text-gray-300 dark:text-gray-600 hover:text-yellow-400"
-                        }`}
-                      >
-                        <Star size={16} />
-                      </button>
-                    ))}
-                  </div>
-                )}
-              </div>
-            </div>
-          </div>
-        ))}
-        {typing && (
-          <div className="flex justify-start">
-            <div className="bg-white dark:bg-gray-800 rounded-full p-3 shadow-lg flex items-center space-x-2">
-              <div className="w-2 h-2 bg-blue-500 rounded-full animate-bounce"></div>
-              <div className="w-2 h-2 bg-blue-500 rounded-full animate-bounce delay-100"></div>
-              <div className="w-2 h-2 bg-blue-500 rounded-full animate-bounce delay-200"></div>
-            </div>
-          </div>
-        )}
-        <div ref={messagesEndRef} />
-      </div>
-      <div className="p-4 bg-white dark:bg-gray-800 border-t border-gray-200 dark:border-gray-700 transition-colors duration-500">
-        <div className="flex items-center space-x-2">
-          <div className="relative">
-            <button
-              onClick={() => setShowEmojiPicker(!showEmojiPicker)}
-              className="text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200 transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-blue-500 rounded-full p-2"
-            >
-              <Smile size={24} />
+        <div className="p-4 border-t border-gray-200">
+          <div className="flex items-center gap-3">
+            <input
+              type="text"
+              placeholder="Write a message..."
+              value={input}
+              onChange={(e) => setInput(e.target.value)}
+              onKeyPress={handleKeyPress}
+              className="flex-1 resize-none overflow-hidden rounded-xl text-gray-800 focus:outline-none focus:ring-2 focus:ring-blue-600 border border-gray-300 bg-gray-100 h-12 px-4"
+            />
+            <button onClick={handleSendMessage} className="bg-blue-600 text-white rounded-xl h-12 w-12 flex items-center justify-center focus:outline-none hover:bg-blue-700">
+              <svg xmlns="http://www.w3.org/2000/svg" width="20px" height="20px" fill="currentColor" viewBox="0 0 256 256">
+                <path d="M237.9,200.09,141.85,32.18a16,16,0,0,0-27.89,0l-95.89,168a16,16,0,0,0,19.25,22.92l90.47-31,.1,0,.09,0,90.68,31a16,16,0,0,0,19.24-23Zm-14,7.84L136,177.86V120a8,8,0,0,0-16,0v57.78L32.12,207.94,32,208,127.86,40,224,208Z"></path>
+              </svg>
             </button>
-            {showEmojiPicker && <EmojiPicker onEmojiSelect={handleEmojiSelect} />}
           </div>
-          <textarea
-            value={input}
-            onChange={(e) => setInput(e.target.value)}
-            onKeyPress={handleKeyPress}
-            placeholder="Type your message..."
-            className="flex-1 p-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-white dark:border-gray-600 transition-colors duration-200 resize-none"
-            rows="1"
-          />
-          <button
-            onClick={handleSendMessage}
-            className="bg-gradient-to-r from-blue-500 to-purple-500 text-white p-3 rounded-lg hover:from-blue-600 hover:to-purple-600 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all duration-200 transform hover:scale-105"
-          >
-            <Send size={24} />
-          </button>
         </div>
       </div>
     </div>
