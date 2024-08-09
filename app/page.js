@@ -1,9 +1,9 @@
 "use client";
-import React, { useState, useRef, useEffect } from "react";
-import { GoogleGenerativeAI } from "@google/generative-ai";
-import { Send, User, Star, MoreVertical, Smile } from "lucide-react";
+import React, {useState, useRef, useEffect} from "react";
+import {GoogleGenerativeAI} from "@google/generative-ai";
+import {Send, User, Star, MoreVertical, Smile} from "lucide-react";
 
-const EmojiPicker = ({ onEmojiSelect }) => {
+const EmojiPicker = ({onEmojiSelect}) => {
   const emojis = ["😀", "😂", "🥰", "😎", "🤔", "👍", "🎉", "🌈", "🍕", "🚀"];
   return (
     <div className="absolute bottom-full left-0 mb-2 p-2 bg-white dark:bg-gray-800 rounded-lg shadow-lg flex space-x-2">
