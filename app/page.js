@@ -1,9 +1,9 @@
 "use client";
-import React, {useState, useRef, useEffect} from "react";
-import {GoogleGenerativeAI} from "@google/generative-ai";
-import {Send, User, Star, MoreVertical, Smile} from "lucide-react";
+import React, { useState, useRef, useEffect } from "react";
+import { GoogleGenerativeAI } from "@google/generative-ai";
+import { Send, User, Star, MoreVertical, Smile } from "lucide-react";
 
-const EmojiPicker = ({onEmojiSelect}) => {
+const EmojiPicker = ({ onEmojiSelect }) => {
   const emojis = ["😀", "😂", "🥰", "😎", "🤔", "👍", "🎉", "🌈", "🍕", "🚀"];
   return (
     <div className="absolute bottom-full left-0 mb-2 p-2 bg-white dark:bg-gray-800 rounded-lg shadow-lg flex space-x-2">
@@ -21,7 +21,9 @@ const EmojiPicker = ({onEmojiSelect}) => {
 };
 
 const Chatbot = () => {
-  const genAI = new GoogleGenerativeAI("AIzaSyBgTLInXBrx-mhdLStDlFfknwizmWFKb8I");
+  const genAI = new GoogleGenerativeAI(
+    "AIzaSyBgTLInXBrx-mhdLStDlFfknwizmWFKb8I",
+  );
   const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
   const [messages, setMessages] = useState([]);
   const [input, setInput] = useState("");
@@ -43,7 +45,12 @@ const Chatbot = () => {
   const handleSendMessage = async () => {
     if (input.trim() === "") return;
 
-    const newMessage = { text: input, isUser: true, rating: null, timestamp: new Date() };
+    const newMessage = {
+      text: input,
+      isUser: true,
+      rating: null,
+      timestamp: new Date(),
+    };
     setMessages((prevMessages) => [...prevMessages, newMessage]);
     setInput("");
     setTyping(true);
@@ -54,7 +61,7 @@ const Chatbot = () => {
           (message) =>
             `${message.isUser ? "User" : "Lily"}: ${message.text}${
               message.rating !== null ? ` (Rating: ${message.rating}⭐)` : ""
-            }`
+            }`,
         )
         .join("\n");
       const prompt = `Your name is Lily, and you are an AI Assistant. You can search, give links of images, and perform Google searches. Here is the conversation so far:\n${history}\nUser: ${input}\nLily:`;
@@ -65,7 +72,12 @@ const Chatbot = () => {
 
       setMessages((prevMessages) => [
         ...prevMessages,
-        { text: text.trim(), isUser: false, rating: null, timestamp: new Date() },
+        {
+          text: text.trim(),
+          isUser: false,
+          rating: null,
+          timestamp: new Date(),
+        },
       ]);
     } catch (error) {
       console.error("Error generating response:", error);
@@ -89,15 +101,15 @@ const Chatbot = () => {
         </a>
       ) : (
         part
-      )
+      ),
     );
   };
 
   const handleRating = (index, rating) => {
     setMessages((prevMessages) =>
       prevMessages.map((message, i) =>
-        i === index ? { ...message, rating } : message
-      )
+        i === index ? { ...message, rating } : message,
+      ),
     );
   };
 
@@ -109,7 +121,7 @@ const Chatbot = () => {
   };
 
   const formatTimestamp = (date) => {
-    return date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+    return date.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
   };
 
   const toggleTheme = () => {
@@ -122,7 +134,9 @@ const Chatbot = () => {
   };
 
   return (
-    <div className={`flex flex-col h-screen bg-gradient-to-br from-blue-50 to-purple-50 dark:from-gray-900 dark:to-blue-900 transition-colors duration-500`}>
+    <div
+      className={`flex flex-col h-screen bg-gradient-to-br from-blue-50 to-purple-50 dark:from-gray-900 dark:to-blue-900 transition-colors duration-500`}
+    >
       <div className="bg-white dark:bg-gray-800 shadow-lg transition-colors duration-500">
         <div className="container mx-auto px-4 py-3 flex items-center justify-between">
           <div className="flex items-center space-x-3">
@@ -135,15 +149,16 @@ const Chatbot = () => {
               <div className="absolute bottom-0 right-0 w-3 h-3 bg-green-500 rounded-full border-2 border-white dark:border-gray-800"></div>
             </div>
             <div>
-              <h2 className="text-xl font-semibold text-gray-800 dark:text-white">Lily</h2>
-              <p className="text-sm text-gray-500 dark:text-gray-400">AI Assistant</p>
+              <h2 className="text-xl font-semibold text-gray-800 dark:text-white">
+                Lily
+              </h2>
+              <p className="text-sm text-gray-500 dark:text-gray-400">
+                AI Assistant
+              </p>
             </div>
           </div>
           <div className="flex items-center space-x-4">
-
-            <button className="text-gray-600 dark:text-gray-300 hover:text-gray-800 dark:hover:text-white transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-blue-500 rounded-full p-2">
-
-            </button>
+            <button className="text-gray-600 dark:text-gray-300 hover:text-gray-800 dark:hover:text-white transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-blue-500 rounded-full p-2"></button>
           </div>
         </div>
       </div>
@@ -156,9 +171,7 @@ const Chatbot = () => {
             } items-start`}
           >
             <div
-              className={`flex-shrink-0 ${
-                message.isUser ? "ml-4" : "mr-4"
-              }`}
+              className={`flex-shrink-0 ${message.isUser ? "ml-4" : "mr-4"}`}
             >
               {!message.isUser ? (
                 <img
@@ -179,7 +192,9 @@ const Chatbot = () => {
                   : "bg-white dark:bg-gray-800 text-gray-800 dark:text-white"
               }`}
             >
-              <p className="text-sm leading-relaxed">{formatMessage(message.text)}</p>
+              <p className="text-sm leading-relaxed">
+                {formatMessage(message.text)}
+              </p>
               <div className="mt-2 flex justify-between items-center">
                 <span className="text-xs opacity-75">
                   {formatTimestamp(message.timestamp)}
@@ -225,7 +240,9 @@ const Chatbot = () => {
             >
               <Smile size={24} />
             </button>
-            {showEmojiPicker && <EmojiPicker onEmojiSelect={handleEmojiSelect} />}
+            {showEmojiPicker && (
+              <EmojiPicker onEmojiSelect={handleEmojiSelect} />
+            )}
           </div>
           <textarea
             value={input}
