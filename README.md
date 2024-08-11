@@ -1,36 +1,33 @@
-This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+# AI Chat Assistant - Lily
 
-## Getting Started
+## Project Overview
 
-First, run the development server:
+This project is an AI Chat Assistant designed to interact with users and provide intelligent responses to a wide range of queries. The assistant leverages the **Gemini 1.5 Flash model**, a state-of-the-art natural language processing (NLP) model, to understand and generate human-like responses. This makes the assistant a versatile tool for various applications.
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+## Features
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+- **Gemini 1.5 Flash Model:** Utilizes the latest advancements in NLP to deliver fast and accurate responses.
+- **Natural Language Understanding (NLU):** Accurately interprets user input to provide relevant and contextually appropriate responses.
+- **Conversational Memory:** Remembers key details from past interactions to maintain context in ongoing conversations.
+- **Customizable Responses:** Easily tailor the assistant's responses to fit specific needs or domains.
+- **Scalable Architecture:** Built to handle multiple concurrent conversations with minimal latency.
 
-You can start editing the page by modifying `app/page.js`. The page auto-updates as you edit the file.
+## Project Structure
 
-This project uses [`next/font`](https://nextjs.org/docs/basic-features/font-optimization) to automatically optimize and load Inter, a custom Google Font.
+- **app/**: Contains the main application files.
+- **public/**: Houses static assets like images and fonts.
+- **.eslintrc.json**: Configuration file for ESLint, which helps in maintaining code quality.
+- **.gitignore**: Specifies files and directories to be ignored by Git.
+- **jsconfig.json**: Configuration file for JavaScript, helping with module resolution.
+- **next.config.mjs**: Configuration file for Next.js, a React framework.
+- **package.json**: Contains metadata about the project, including dependencies and scripts.
+- **package-lock.json**: Records the exact versions of dependencies installed.
+- **postcss.config.mjs**: Configuration for PostCSS, a tool for transforming CSS with JavaScript.
+- **tailwind.config.js**: Configuration for Tailwind CSS, a utility-first CSS framework.
+- **README.md**: (This file) Overview and instructions for the project.
 
-## Learn More
+## Installation
 
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js/) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/deployment) for more details.
+1. **Clone the Repository:**
+   ```bash
+   git clone https://github.com/your-username/AI-ChatAssistant.git
